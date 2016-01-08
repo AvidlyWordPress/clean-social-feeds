@@ -6,42 +6,22 @@ This helper library is made out of need to get feeds from social media platforms
 control of the markup and styles, without any added bloat from external libraries.
 
 ## Usage
-1. Include this repo as submodule or download the `clean-social-feeds.php` and include it directly in your theme/plugin.
-2. Create applications for social media platforms you are intending to use.
-3. Get the feeds, build your own markup and styles and you're good to go!
-4. In case the feeds are broken, the API's may have changed, so check if there are any updates for the library.
+**1. Download and activate the plugin**
 
-## Usage in-depth
+**2. Setup and request access tokens for the applications**
 
-### Application keys
-You need to create application for the social media platforms you are indending to use, and get the
-corresponsing application keys.
+Head into `Settings -> Clean Social Feeds` and follow the instructions there to setup the application
+information.
 
-#### Facebook
-Create your Facebook App here: https://developers.facebook.com/apps/
-
-#### Twitter
-Create your Twitter App here: https://apps.twitter.com/app/new
-
-### Getting social media feeds
-
-**1. Setup the main class with application keys**
+**3. Get the feeds**
 ```php
-$feeds = new Clean_Social_Feeds( array(
-	'facebook_app_id'         => 'YOUR_FACEBOOK_APP_ID_HERE',
-	'facebook_app_secret'     => 'YOUR_FACEBOOK_APP_SECRET_HERE',
-	'twitter_consumer_key'    => 'YOUR_TWITTER_CONSUMER_KEY_HERE',
-	'twitter_consumer_secret' => 'YOUR_TWITTER_CONSUMER_SECRET_HERE',
-) );
+$feeds     = new Clean_Social_Feeds();
+$facebook  = $feeds->getFacebookPagePosts( array( 'page_id' => 'FACEBOOK_PAGE_ID_HERE' ) );
+$twitter   = $feeds->getTwitterUserPosts( array( 'username' => 'TWITTER_USERNAME_HERE' ) );
+$instagram = $feeds->getInstagramUserPosts();
 ```
 
-**2. Get the feeds**
-```php
-$facebook = $feeds->getFacebookPagePosts( array( 'page_id' => 'FACEBOOK_PAGE_ID_HERE' ) );
-$twitter  = $feeds->getTwitterUserPosts( array( 'username' => 'TWITTER_USERNAME_HERE' ) );
-```
-
-**3. Create the markup for the feeds.**
+**4. Inspect the returned data and create the markup.**
 ```php
 // Facebook
 if ( ! is_wp_error( $facebook ) && ! empty( $facebook['posts']['data'] ) ) {
@@ -55,6 +35,12 @@ if ( ! is_wp_error( $twitter ) && ! empty( $twitter ) ) {
 	print_r($twitter);
 	echo '</pre>';
 }
+// Instagram
+if ( ! is_wp_error( $instagram ) && ! empty( $instagram['data'] ) ) {
+	echo '<pre>';
+	print_r($instagram);
+	echo '</pre>';
+}
 ```
 
 ### Optional arguments for feeds
@@ -65,8 +51,18 @@ Currently you can pass the following arguments while retrieving the feeds from s
 | All        | cache      | (bool) Should we cache the result            | true          |
 | All        | cache_time | (int) Time to cache the results (in seconds) | 60*60         |
 | All        | limit      | (int) Number of results to get               | 10            |
+| Facebook   | page_id    | (int) Facebook page ID                       | null          |
+| Twitter    | username   | (string) Twitter username                    | null          |
+| Instagram  | user_id    | (bool&#124;string) Instagram user ID         | self          |
 
 ## Version history
 
+**1.2** *(8.12.2016)*
+* Added settings -page for saving application information
+* Added Instagram support
+
+**1.1** *(6.12.2015)*
+* Converted into plugin *(thanks danielck)*
+
 **1.0** *(30.12.2015)*
-* Initial release.
+* Initial release
